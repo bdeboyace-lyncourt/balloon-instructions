@@ -25,8 +25,8 @@
     }
     .balloon-wrapper {
       position: relative;
-      width: 400px;  /* doubled width */
-      height: 600px; /* doubled height */
+      width: 400px;  /* big size */
+      height: 600px;
       cursor: pointer;
       animation: bounce 2s infinite;
       transition: transform 0.3s ease;
@@ -60,7 +60,7 @@
   </style>
 </head>
 <body>
-  <h1>Pop the Balloon to learn our task!</h1>
+  <h1>Pop the Balloon</h1>
   <div id="balloonContainer">
     <!-- Balloon loads here -->
   </div>
@@ -68,7 +68,7 @@
   <audio id="popSound" src="https://picturetosound.com/content/248BDBD278CA22CB8CDAF70403211E571312928C/audio_preview.mp3"></audio>
 
   <script>
-    const csvUrl = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vQjkvDhyTHYfBckhCaPUD1vY0OoQwdymoFBjRCPaknGKnxONrRmkTgU5pxBUJytIY4JUhkI9Z-kW4o6/pub?output=csv';
+    const csvUrl = 'https://docs.google.com/spreadsheets/d/1ot4fT-n8eQ1Y5na24rJgOEus3nI5I0tpw_m0jQREICs/gviz/tq?tqx=out:csv&sheet=Form_Responses1';
 
     fetch(csvUrl)
       .then(response => response.text())
@@ -76,6 +76,7 @@
         const parsed = Papa.parse(text, { header: true });
         console.log('Parsed data:', parsed.data);
 
+        // Filter out any completely blank rows
         const data = parsed.data.filter(row => Object.values(row).some(val => val.trim() !== ''));
         if (data.length === 0) {
           $('#balloonContainer').html('<p>No data found.</p>');
@@ -85,7 +86,8 @@
         const latest = data[data.length - 1];
         console.log('Latest row:', latest);
 
-        const directionText = latest['Instructions'] || 'No instructions found';
+        // Use the new column header name: "Pop the Balloon"
+        const directionText = latest['Pop the Balloon'] || 'No instructions found';
         console.log('Instructions text:', directionText);
 
         const balloonHTML = `
@@ -109,7 +111,7 @@
         'animation': 'pop 0.5s forwards'
       });
 
-      // Confetti blast
+      // Confetti blast (multi-angle, wide spread)
       confetti({
         particleCount: 200,
         spread: 120,
