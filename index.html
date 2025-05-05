@@ -99,10 +99,9 @@
 
         const latest = data[data.length - 1];
         
-        // Find the column that includes 'Instructions' in its name (flexible match)
-        const key = Object.keys(latest).find(k => k.toLowerCase().includes('instructions'));
-        const directionText = (key && latest[key]) ? latest[key] : 'No directions found';
-        console.log('Using key:', key, '| Text:', directionText);
+        // Direct match now that header is "Instructions"
+        const directionText = latest['Instructions'] || 'No instructions found';
+        console.log('Instructions text:', directionText);
 
         const balloonHTML = `
           <div class="balloon-wrapper" onclick="popBalloon(this)">
