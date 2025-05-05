@@ -2,6 +2,8 @@
 <head>
   <title>Pop the Big Balloon!</title>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/papaparse@5.4.1/papaparse.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
   <style>
     body {
       font-family: Arial, sans-serif;
@@ -23,8 +25,8 @@
     }
     .balloon-wrapper {
       position: relative;
-      width: 200px;
-      height: 300px;
+      width: 400px;  /* doubled width */
+      height: 600px; /* doubled height */
       cursor: pointer;
       animation: bounce 2s infinite;
       transition: transform 0.3s ease;
@@ -39,7 +41,7 @@
       left: 50%;
       transform: translate(-50%, -50%);
       display: none;
-      font-size: 20px;
+      font-size: 24px;
       font-weight: bold;
       color: darkblue;
       text-align: center;
@@ -68,38 +70,21 @@
   <script>
     const csvUrl = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vQjkvDhyTHYfBckhCaPUD1vY0OoQwdymoFBjRCPaknGKnxONrRmkTgU5pxBUJytIY4JUhkI9Z-kW4o6/pub?output=csv';
 
-    function parseCSV(text) {
-      const rows = text.trim().split('\n').map(row => {
-        const re = /(".*?"|[^",\s]+)(?=\s*,|\s*$)/g;
-        return [...row.matchAll(re)].map(m => m[0].replace(/^"|"$/g, '').trim());
-      });
-      const headers = rows[0].map(h => h.trim());
-      const data = rows.slice(1).map(row => {
-        let obj = {};
-        row.forEach((val, idx) => {
-          obj[headers[idx]] = val.trim();
-        });
-        return obj;
-      });
-      console.log('Headers:', headers);
-      return data;
-    }
-
     fetch(csvUrl)
       .then(response => response.text())
       .then(text => {
-        console.log('CSV raw text:', text);
-        const data = parseCSV(text);
-        console.log('Parsed data:', data);
+        const parsed = Papa.parse(text, { header: true });
+        console.log('Parsed data:', parsed.data);
 
+        const data = parsed.data.filter(row => Object.values(row).some(val => val.trim() !== ''));
         if (data.length === 0) {
           $('#balloonContainer').html('<p>No data found.</p>');
           return;
         }
 
         const latest = data[data.length - 1];
-        
-        // Direct match now that header is "Instructions"
+        console.log('Latest row:', latest);
+
         const directionText = latest['Instructions'] || 'No instructions found';
         console.log('Instructions text:', directionText);
 
@@ -122,6 +107,28 @@
 
       $(el).find('.balloon').css({
         'animation': 'pop 0.5s forwards'
+      });
+
+      // Confetti blast
+      confetti({
+        particleCount: 200,
+        spread: 120,
+        startVelocity: 45,
+        origin: { y: 0.6 }
+      });
+      confetti({
+        particleCount: 100,
+        angle: 60,
+        spread: 100,
+        startVelocity: 45,
+        origin: { x: 0, y: 0.6 }
+      });
+      confetti({
+        particleCount: 100,
+        angle: 120,
+        spread: 100,
+        startVelocity: 45,
+        origin: { x: 1, y: 0.6 }
       });
 
       setTimeout(() => {
