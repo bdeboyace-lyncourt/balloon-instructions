@@ -58,12 +58,12 @@
   </style>
 </head>
 <body>
-  <h1>Click the Balloon to Reveal Directions!</h1>
+  <h1>Click the Balloon to Reveal Instructions!</h1>
   <div id="balloonContainer">
     <!-- Balloon loads here -->
   </div>
 
-  <audio id="popSound" src="https://www.soundjay.com/buttons/sounds/button-16.mp3"></audio>
+  <audio id="popSound" src="https://picturetosound.com/content/248BDBD278CA22CB8CDAF70403211E571312928C/audio_preview.mp3"></audio>
 
   <script>
     const csvUrl = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vQjkvDhyTHYfBckhCaPUD1vY0OoQwdymoFBjRCPaknGKnxONrRmkTgU5pxBUJytIY4JUhkI9Z-kW4o6/pub?output=csv';
@@ -98,7 +98,11 @@
         }
 
         const latest = data[data.length - 1];
-        const directionText = latest['Directions'] || 'No directions found';
+        
+        // Find the column that includes 'Instructions' in its name (flexible match)
+        const key = Object.keys(latest).find(k => k.toLowerCase().includes('instructions'));
+        const directionText = (key && latest[key]) ? latest[key] : 'No directions found';
+        console.log('Using key:', key, '| Text:', directionText);
 
         const balloonHTML = `
           <div class="balloon-wrapper" onclick="popBalloon(this)">
